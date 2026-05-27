@@ -3,11 +3,25 @@ package com.twitter.demo.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.stream.Collectors;
+
+
+/* Spring Security içinde olup da elle oluşturmama gerek olmayan exceptionlar bunlar
+mesela ben UserNtFoundException yazmışım ama gerek yok zaten security de var bu
+   BadCredentialsException
+UsernameNotFoundException
+AccessDeniedException
+LockedException
+DisabledException
+AccountExpiredException
+CredentialsExpiredException
+ */
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -47,6 +61,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException e, HttpServletRequest request) {
         return buildErrorResponse(e.getMessage(), request, 404);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e, HttpServletRequest request) {
+        return buildErrorResponse(e.getMessage(), request, 401);
     }
 }
 

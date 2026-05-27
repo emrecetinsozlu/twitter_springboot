@@ -9,6 +9,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+
+
+
+// UserDetailsService i yazınca application properties deki username ve şifre devre dışı kalmış oldu
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {

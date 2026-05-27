@@ -23,6 +23,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
 
+    // İsteklerin COntroller'a gitmeden önce ilk geçtiği süreç securityfilterchain.
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -30,7 +31,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/api/auth/**","/users/register").permitAll()
                         .anyRequest().authenticated())
+
+
+                //Basic-auth işlemi header ile taşınır yani bir kullanıcı adı şifreyi postmande girdiğinde base64 ile encode edilip header üzerinden backende gönderilir
+
                 .httpBasic(Customizer.withDefaults())
+                .authenticationProvider(authenticationProvider())
                 .build();
 
     }
@@ -47,6 +53,8 @@ public class SecurityConfig {
 "Ben uygulama içinde AuthenticationManager tipinde bir nesne (Bean) bulamadım, bunu nereye bağlayacağımı bilmiyorum."
      */
 
+
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
@@ -59,4 +67,6 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
+
 }
