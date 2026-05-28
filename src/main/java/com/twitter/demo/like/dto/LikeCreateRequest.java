@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotNull;
 public record LikeCreateRequest(
 
         @NotNull(message = "Tweet id is required")
-        Long tweetId,
+        Long tweetId
 
-        @NotNull(message = "User id is required")
-        Long userId
+        //@NotNull(message = "User id is required")
+        //Long userId
 ) {
 }

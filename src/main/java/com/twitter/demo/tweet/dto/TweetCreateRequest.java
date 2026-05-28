@@ -8,8 +8,7 @@ import jakarta.validation.constraints.Size;
 public record TweetCreateRequest (
         @NotBlank(message = "tweet boş olamaz")
         @Size(min = 1, max = 250, message = "280 karakterden fazla olamaz")
-        String content,
+        String content
         //Şimdilik security hazır olmadığı için userId request’ten alıyoruz. JWT gelince bunu token’dan alacağız.
-        @NotNull
-        Long userId
+        //@NotNull(message = "userId boş olamaz") Long userId
 ){}

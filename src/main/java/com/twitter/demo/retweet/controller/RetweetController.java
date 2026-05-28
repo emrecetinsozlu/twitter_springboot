@@ -24,9 +24,9 @@ public class RetweetController {
 
     @DeleteMapping("/{id}")
     public void deleteRetweet(
-            @PathVariable Long id,
-            @RequestParam Long userId
+            @PathVariable Long id
+            //@RequestParam Long userId
     ) {
-        retweetService.deleteRetweet(id, userId);
+        retweetService.deleteRetweet(id);
     }
 }

@@ -10,9 +10,10 @@ public record CommentCreateRequest(
         String content,
 
         @NotNull(message = "Tweet id is required")
-        Long tweetId,
-
-        @NotNull(message = "User id is required")
-        Long userId
+        Long tweetId
+        //Artık kullanıcı bilgisini security context'ten alacağız.
+        //bir kullanıcı login olduğunda jwt bir token generate ediyor ve bu token içerisinde kullanıcı bilgisi var.
+        //@NotNull(message = "User id is required")
+        //Long userId
 ) {
 }

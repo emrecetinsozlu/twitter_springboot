@@ -7,7 +7,7 @@ public interface RetweetService {
 
     RetweetResponse retweet(RetweetCreateRequest request);
 
-    void deleteRetweet(Long retweetId, Long userId);
+    void deleteRetweet(Long retweetId);
 
 
 }

@@ -33,16 +33,19 @@ public class TweetController {
         return tweetService.findById(tweetId);
     }
 
+
+    // Artık kullanıcıyı url'den değil security contextten alacağız bunun için CurrentUserService yazdık.
     @PutMapping("/{tweetId}")
-    public TweetResponse updateTweet(@PathVariable Long tweetId, @RequestParam Long userId, @RequestBody @Valid TweetUpdateRequest tweetUpdateRequest) {
-        return tweetService.updateTweet(userId, tweetId, tweetUpdateRequest);
+    public TweetResponse updateTweet(@PathVariable Long tweetId, @RequestBody @Valid TweetUpdateRequest tweetUpdateRequest) {
+        return tweetService.updateTweet(tweetId, tweetUpdateRequest);
     }
 
 
     //DELETE /tweets/1?userId=5
+    //Fakat kullanıcı bilgisini RequestParam ile almak güvenli değil artık SecurityContext'ten alacağız
     @DeleteMapping("{tweetId}")
     public void deleteTweet(@PathVariable Long tweetId, @RequestParam Long userId) {
-        tweetService.deleteTweet(tweetId, userId);
+        tweetService.deleteTweet(tweetId);
 
     }
 }

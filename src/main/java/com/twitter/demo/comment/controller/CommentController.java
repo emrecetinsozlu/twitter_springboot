@@ -27,19 +27,19 @@ public class CommentController {
     @PutMapping("/{id}")
     public CommentResponse updateComment(
             @PathVariable Long commentId,
-            @RequestParam Long userId,
+            //@RequestParam Long userId,
             @Valid
             @RequestBody CommentUpdateRequest commentUpdateRequest
     ){
-        return commentService.updateComment(commentUpdateRequest, commentId, userId);
+        return commentService.updateComment(commentUpdateRequest, commentId);
     }
 
     @DeleteMapping("/{id}")
     public void deleteComment(
-            @PathVariable Long id,
-            @RequestParam Long userId
+            @PathVariable Long id
+           //@RequestParam Long userId
     ){
-        commentService.deleteComment(id, userId);
+        commentService.deleteComment(id);
     }
 
 

@@ -8,6 +8,7 @@ import com.twitter.demo.retweet.RetweetRepository;
 import com.twitter.demo.retweet.dto.RetweetCreateRequest;
 import com.twitter.demo.retweet.dto.RetweetMapper;
 import com.twitter.demo.retweet.dto.RetweetResponse;
+import com.twitter.demo.security.CurrentUserService;
 import com.twitter.demo.tweet.Tweet;
 import com.twitter.demo.tweet.TweetRepository;
 import com.twitter.demo.user.User;
@@ -23,22 +24,25 @@ public class RetweetServiceImpl implements RetweetService {
     private final RetweetRepository retweetRepository;
     private final UserRepository userRepository;
     private final TweetRepository tweetRepository;
+    private final CurrentUserService currentUserService;
 
     @Override
     @Transactional
     public RetweetResponse retweet(RetweetCreateRequest request) {
-        User user = userRepository.findById(request.userId())
+        User currentUser = currentUserService.getCurrentUser();
+        /*
+        User user = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "User not found with id: " + request.userId()
+                        "User not found with id: " + currentUser.getId()
                 ));
-
+        */
         Tweet tweet = tweetRepository.findById(request.tweetId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Tweet not found with id: " + request.tweetId()
                 ));
 
         boolean alreadyRetweeted = retweetRepository.existsByUserIdAndTweetId(
-                request.userId(),
+                currentUser.getId(),
                 request.tweetId()
         );
 
@@ -47,7 +51,7 @@ public class RetweetServiceImpl implements RetweetService {
         }
 
         Retweet retweet = Retweet.builder()
-                .user(user)
+                .user(currentUser)
                 .tweet(tweet)
                 .build();
 
@@ -58,13 +62,15 @@ public class RetweetServiceImpl implements RetweetService {
 
     @Override
     @Transactional
-    public void deleteRetweet(Long retweetId, Long userId) {
+    public void deleteRetweet(Long retweetId) {
+
+        User currentUser = currentUserService.getCurrentUser();
         Retweet retweet = retweetRepository.findById(retweetId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Retweet not found with id: " + retweetId
                 ));
 
-        if (!retweet.getUser().getId().equals(userId)) {
+        if (!retweet.getUser().getId().equals(currentUser.getId())) {
             throw new ForbiddenException("You are not allowed to delete this retweet");
         }
 

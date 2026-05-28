@@ -8,6 +8,7 @@ import com.twitter.demo.comment.dto.CommentResponse;
 import com.twitter.demo.comment.dto.CommentUpdateRequest;
 import com.twitter.demo.exception.ForbiddenException;
 import com.twitter.demo.exception.ResourceNotFoundException;
+import com.twitter.demo.security.CurrentUserService;
 import com.twitter.demo.tweet.Tweet;
 import com.twitter.demo.tweet.TweetRepository;
 import com.twitter.demo.user.User;
@@ -24,15 +25,21 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final TweetRepository tweetRepository;
+    private final CurrentUserService currentUserService;
+
 
     @Override
     @Transactional
     public CommentResponse createComment(CommentCreateRequest commentCreateRequest) {
-        User user = userRepository.findById(commentCreateRequest.userId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        User currentUser = currentUserService.getCurrentUser();
+
+        //User user = userRepository.findById(commentCreateRequest.userId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepository.findById(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Tweet tweet = tweetRepository.findById(commentCreateRequest.tweetId()).orElseThrow(() -> new ResourceNotFoundException("Tweet not found"));
         Comment comment = Comment.builder()
                 .content(commentCreateRequest.content())
-                .user(user)
+                .user(currentUser)
                 .tweet(tweet)
                 .build();
         Comment savedComment = commentRepository.save(comment);
@@ -41,9 +48,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentResponse updateComment(CommentUpdateRequest commentUpdateRequest, Long commentId, Long userId) {
+    public CommentResponse updateComment(CommentUpdateRequest commentUpdateRequest, Long commentId) {
+         User currentUser = currentUserService.getCurrentUser();
          Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
-         if (!comment.getUser().getId().equals(userId)) {
+         if (!comment.getUser().getId().equals(currentUser.getId())) {
              throw new ForbiddenException("You are not allowed to update this comment");
          }
          comment.setContent(commentUpdateRequest.content());
@@ -52,13 +60,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Long commentId, Long userId) {
+    public void deleteComment(Long commentId) {
+        User currentUser = currentUserService.getCurrentUser();
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
         Long commentOwnerId = comment.getId();
         Long tweetOwnerId = comment.getTweet().getUser().getId();
 
-        boolean isCommentOwner = commentOwnerId.equals(userId);
-        boolean isTweetOwner = tweetOwnerId.equals(userId);
+        boolean isCommentOwner = commentOwnerId.equals(currentUser.getId());
+        boolean isTweetOwner = tweetOwnerId.equals(currentUser.getId());
         if(!isCommentOwner && !isTweetOwner) {
             throw new ForbiddenException("You are not allowed to delete this comment");
         }

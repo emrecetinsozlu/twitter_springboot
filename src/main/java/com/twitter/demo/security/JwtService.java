@@ -38,6 +38,7 @@ public class JwtService {
         );
     }
 
+    // login durumunda token üretmek için bu methodu kullanacağız. AuthServiceImp içinde.
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
@@ -47,6 +48,7 @@ public class JwtService {
                 .compact();
     }
 
+    // Filter içerisinde token doğrulama yaparken bu methodu kullanacağız. JwtFilter içinde.
     public String extractUsername(String token) {
         return extractAllClaims(token)
                 .getSubject();

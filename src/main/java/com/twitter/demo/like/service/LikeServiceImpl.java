@@ -7,6 +7,7 @@ import com.twitter.demo.like.dto.LikeCreateRequest;
 import com.twitter.demo.like.dto.LikeMapper;
 import com.twitter.demo.like.dto.LikeResponse;
 import com.twitter.demo.like.repository.LikeRepository;
+import com.twitter.demo.security.CurrentUserService;
 import com.twitter.demo.tweet.Tweet;
 import com.twitter.demo.tweet.TweetRepository;
 import com.twitter.demo.user.User;
@@ -21,14 +22,15 @@ public class LikeServiceImpl implements LikeService {
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final TweetRepository tweetRepository;
+    private final CurrentUserService currentUserService;
 
     @Override
     @Transactional
     public LikeResponse likeTweet(LikeCreateRequest request) {
-
-        User user = userRepository.findById(request.userId())
+        User currentUser = currentUserService.getCurrentUser();
+        User user = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "User not found with id: " + request.userId()
+                        "User not found with id: " + currentUser.getId()
                 ));
 
         Tweet tweet = tweetRepository.findById(request.tweetId())
@@ -37,7 +39,7 @@ public class LikeServiceImpl implements LikeService {
                 ));
 
         boolean alreadyLiked = likeRepository.existsByUserIdAndTweetId(
-                request.userId(),
+                currentUser.getId(),
                 request.tweetId()
         );
 
@@ -58,12 +60,12 @@ public class LikeServiceImpl implements LikeService {
     @Override
     @Transactional
     public void dislikeTweet(LikeCreateRequest request) {
-
+        User currentUser = currentUserService.getCurrentUser();
         Like like = likeRepository.findByUserIdAndTweetId(
-                request.userId(),
+                currentUser.getId(),
                 request.tweetId()
         ).orElseThrow(() -> new ResourceNotFoundException(
-                "Like not found for userId: " + request.userId()
+                "Like not found for userId: " + currentUser.getId()
                         + " and tweetId: " + request.tweetId()
         ));
 

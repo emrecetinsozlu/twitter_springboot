@@ -2,6 +2,7 @@ package com.twitter.demo.tweet.service;
 
 import com.twitter.demo.exception.ResourceNotFoundException;
 import com.twitter.demo.exception.UserNotFoundException;
+import com.twitter.demo.security.CurrentUserService;
 import com.twitter.demo.tweet.Tweet;
 import com.twitter.demo.tweet.TweetRepository;
 import com.twitter.demo.tweet.dto.TweetCreateRequest;
@@ -23,17 +24,19 @@ public class TweetServiceImpl implements TweetService {
 
     private final TweetRepository tweetRepository;
     private final UserRepository userRepository;
-    public TweetServiceImpl(TweetRepository tweetRepository,  UserRepository userRepository) {
+    private final CurrentUserService currentUserService;
+
+    public TweetServiceImpl(TweetRepository tweetRepository,  UserRepository userRepository, CurrentUserService currentUserService) {
         this.tweetRepository = tweetRepository;
         this.userRepository = userRepository;
-
+        this.currentUserService = currentUserService;
     }
 
     @Override
     @Transactional
     public TweetResponse createTweet(TweetCreateRequest tweetCreateRequest) {
-
-        User user = userRepository.findById(tweetCreateRequest.userId()).orElseThrow(() -> new UserNotFoundException("User bulunamadı"));
+        User currentUser =  currentUserService.getCurrentUser();
+        User user = userRepository.findById(currentUser.getId()).orElseThrow(() -> new UserNotFoundException("User bulunamadı"));
         Tweet tweet = Tweet.builder()
                 .content(tweetCreateRequest.content())
                 .user(user)
@@ -56,13 +59,14 @@ public class TweetServiceImpl implements TweetService {
         return tweetRepository.findById(tweetId).map(TweetMapper::toTweetResponse).orElseThrow(() -> new ResourceNotFoundException("Tweet not found"));
 
     }
-
+    // Kullanıcı bilgisini artık userId olarak url requestparam olarak değil de securitycontextten alacağız
     @Override
-    public TweetResponse updateTweet(Long userId,Long tweetId, TweetUpdateRequest tweetUpdateRequest) {
+    public TweetResponse updateTweet(Long tweetId, TweetUpdateRequest tweetUpdateRequest) {
 
         Tweet tweet = tweetRepository.findById(tweetId).orElseThrow(() -> new ResourceNotFoundException("Tweet not found"));
-
-        if (!tweet.getUser().getId().equals(userId)) {
+        //Aktif kullanıcı bilgisini security contextten çekmiş olduk.
+        User currentUser = currentUserService.getCurrentUser();
+        if (!tweet.getUser().getId().equals(currentUser.getId())) {
             throw new ResourceNotFoundException("User is not authorized to update this tweet");
         }
         tweet.setContent(tweetUpdateRequest.content());
@@ -75,9 +79,10 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public void deleteTweet(Long tweetId, Long userId) {
+    public void deleteTweet(Long tweetId) {
         Tweet tweet = tweetRepository.findById(tweetId).orElseThrow(() -> new RuntimeException("Tweet not found"));
-        if (!tweet.getUser().getId().equals(userId)) {
+        User currentUser = currentUserService.getCurrentUser();
+        if (!tweet.getUser().getId().equals(currentUser.getId())) {
             throw new RuntimeException("User is not authorized to delete this tweet");
         }
         tweetRepository.delete(tweet);
