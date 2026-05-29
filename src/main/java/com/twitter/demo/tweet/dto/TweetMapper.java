@@ -10,6 +10,10 @@ public class TweetMapper {
                 tweet.getContent(),
                 tweet.getUser().getId(),
                 tweet.getUser().getUsername(),
+                tweet.getHashtags()
+                        .stream()
+                        .map(hashtag -> hashtag.getName())
+                        .toList(),
                 tweet.getCreatedAt(),
                 tweet.getUpdatedAt()
         );

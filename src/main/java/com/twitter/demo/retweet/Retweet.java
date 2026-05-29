@@ -26,6 +26,7 @@ public class Retweet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //bu bir unidirectional ilişki, çünkü Retweet sadece User ve Tweet'e referans verir, ancak User ve Tweet Retweet'e referans vermez.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

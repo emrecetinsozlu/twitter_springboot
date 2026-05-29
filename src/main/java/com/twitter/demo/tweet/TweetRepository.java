@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface TweetRepository extends JpaRepository<Tweet, Long> {
     List<Tweet> findByUserId(Long userId);
+    List<Tweet> findByHashtagsName(String hashtagsName);
 }

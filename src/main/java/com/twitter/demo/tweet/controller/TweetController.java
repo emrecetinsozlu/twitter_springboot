@@ -39,7 +39,11 @@ public class TweetController {
     public TweetResponse updateTweet(@PathVariable Long tweetId, @RequestBody @Valid TweetUpdateRequest tweetUpdateRequest) {
         return tweetService.updateTweet(tweetId, tweetUpdateRequest);
     }
-
+    //GET /tweets/findByHashtag?name=java
+    @GetMapping("/findByHashtag")
+    public List<TweetResponse> findByHashtag(@RequestParam String name) {
+        return tweetService.findByHashtagsName(name);
+    }
 
     //DELETE /tweets/1?userId=5
     //Fakat kullanıcı bilgisini RequestParam ile almak güvenli değil artık SecurityContext'ten alacağız

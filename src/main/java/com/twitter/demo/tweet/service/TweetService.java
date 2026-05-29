@@ -17,5 +17,7 @@ public interface TweetService {
 
     TweetResponse updateTweet(Long tweetId,TweetUpdateRequest tweetUpdateRequest);
 
+    List<TweetResponse> findByHashtagsName(String hashtagsName);
+
     void deleteTweet(Long tweetId);
 }
