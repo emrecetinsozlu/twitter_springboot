@@ -2,6 +2,7 @@ package com.twitter.demo.exception;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -66,6 +67,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e, HttpServletRequest request) {
         return buildErrorResponse(e.getMessage(), request, 401);
+    }
+    @ExceptionHandler(com.twitter.demo.exception.BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e, HttpServletRequest request) {
+        return buildErrorResponse(e.getMessage(), request, 400);
     }
 }
 

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tweets")
+@RequestMapping("/tweet")
 @RequiredArgsConstructor
 public class TweetController {
     private final TweetService tweetService;
@@ -47,7 +47,7 @@ public class TweetController {
 
     //DELETE /tweets/1?userId=5
     //Fakat kullanıcı bilgisini RequestParam ile almak güvenli değil artık SecurityContext'ten alacağız
-    @DeleteMapping("{tweetId}")
+    @DeleteMapping("/{tweetId}")
     public void deleteTweet(@PathVariable Long tweetId, @RequestParam Long userId) {
         tweetService.deleteTweet(tweetId);
 

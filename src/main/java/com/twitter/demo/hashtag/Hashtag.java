@@ -34,3 +34,28 @@ public class Hashtag {
     // eğer builder.default kullanmazsam tweet i builder patterni ile oluştururken tweets i girmezsem null gelir. Kısaca builder.default başlangıçta atadığınd default dereğerlerin builder da atanmasa bile ezilip boş olarak atanmasının önüne geçer
     private Set<Tweet> tweets = new HashSet<>();
 }
+
+/*
+Ayrı entity(ManytoOne) mi yoksa ara tablo mu(ManytoMany) kullanacağımıza karar verirken şunu yapıyoruz;
+Sadece ilişki mi tutuyorum?
+
+EVET
+↓
+ManyToMany
+
+HAYIR
+↓
+Ara entity
+
+Tweet ↔ Hashtag
+ManyToMany
+User ↔ Bookmark ↔ Tweet
+(createdAt yoksa)
+ManyToMany
+User ↔ Like ↔ Tweet
+(createdAt var)
+Ara Entity
+User ↔ Retweet ↔ Tweet
+(createdAt var)
+Ara Entity
+ */

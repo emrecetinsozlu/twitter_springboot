@@ -1,6 +1,7 @@
 package com.twitter.demo.tweet;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.twitter.demo.hashtag.Hashtag;
 import com.twitter.demo.user.User;
@@ -43,6 +44,22 @@ public class Tweet {
     @JsonManagedReference("tweet_hashtags")
     @Builder.Default
     private Set<Hashtag> hashtags = new HashSet<>();
+
+    //bir tweet bir çok kullanıcı tarafından bookmarklanabilir, bir kullanıcı da bir çok tweeti bookmarklayabilir. Bu yüzden bu ilişki de ManyToMany
+    //bir tweet i kimler/hangi userlar bookmarklado
+    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "bookmarkedTweets")
+    @JsonBackReference("user_bookmarks")
+
+    private Set<User> bookmarkedUsers = new HashSet<>();
+    /*
+    Bookmark feature'ın asıl amacı yeni bir şey öğretmekten çok şunu pekiştirmekti:
+    "ManyToMany kullanacağım durum"
+    ile
+    "Ara entity kullanacağım durum"
+    arasındaki çizgi.
+     */
+
+
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
