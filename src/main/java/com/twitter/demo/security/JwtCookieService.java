@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtCookieService {
     public void addJwtCookie(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie("emre_access_token", token);
+        Cookie cookie = new Cookie("access_token", token);
         cookie.setHttpOnly(true);
         cookie.setSecure(false); // prod'da true
         cookie.setPath("/");
