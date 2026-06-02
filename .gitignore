@@ -1,33 +1,24 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# macOS
+.DS_Store
+**/.DS_Store
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
+# IDE
+.idea/
+**/.idea/
 *.iml
-*.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Backend
+backend/target/
 
-### VS Code ###
-.vscode/
+# Frontend build/deps
+twitter_frontend/twitter-frontend/node_modules/
+twitter_frontend/twitter-frontend/dist/
+twitter_frontend/twitter-frontend/.next/
+twitter_frontend/twitter-frontend/build/
+
+# Nested git repo
+twitter_frontend/twitter-frontend/.git/
+
+# Design/export/archive files
+twitter_frontend/stitch_neon_tokyo_social/
+twitter_frontend/*.zip

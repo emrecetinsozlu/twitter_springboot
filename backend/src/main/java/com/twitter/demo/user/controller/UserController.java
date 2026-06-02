@@ -20,6 +20,12 @@ public class UserController {
         return userService.register(request);
     }
 
+    @GetMapping("/me")
+    public UserResponse getCurrentUser() {
+        return userService.getCurrentUser();
+    }
+
+
     @GetMapping("/hello")
     public String hello(){
         return "hello";

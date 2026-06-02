@@ -15,6 +15,7 @@ public class JwtCookieService {
         cookie.setHttpOnly(true);
         cookie.setSecure(false); // prod'da true
         cookie.setPath("/");
+
         cookie.setMaxAge(24 * 60 * 60);
         response.addCookie(cookie);
     }

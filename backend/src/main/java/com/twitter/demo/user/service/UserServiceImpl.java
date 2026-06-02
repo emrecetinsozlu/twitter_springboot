@@ -1,5 +1,6 @@
 package com.twitter.demo.user.service;
 
+import com.twitter.demo.security.CurrentUserService;
 import com.twitter.demo.user.User;
 import com.twitter.demo.user.UserRepository;
 import com.twitter.demo.user.dto.UserMapper;
@@ -14,10 +15,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final CurrentUserService currentUserService;
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, CurrentUserService currentUserService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.currentUserService = currentUserService;
     }
 
     @Override
@@ -36,5 +38,12 @@ public class UserServiceImpl implements UserService {
                 .build();
         User savedUser = userRepository.save(user);
         return UserMapper.toUserResponse(savedUser);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse getCurrentUser() {
+        User currentUser = currentUserService.getCurrentUser();
+        return UserMapper.toUserResponse(currentUser);
     }
 }

@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/auth/**","/users/register").permitAll()
+                        .requestMatchers("/api/auth/**","/users/me","/users/register").permitAll()
                         .anyRequest().authenticated())
                 //session ı stateless yapınca basic-auth a da gerek kalmadı
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
