@@ -9,8 +9,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/comments")
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -42,5 +44,10 @@ public class CommentController {
         commentService.deleteComment(id);
     }
 
-
+    @GetMapping("tweet/{tweetId}")
+    public List<CommentResponse> getCommentsByTweetId(
+            @PathVariable Long tweetId
+    ){
+        return commentService.getCommentsByTweetId(tweetId);
+    }
 }

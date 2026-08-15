@@ -8,7 +8,11 @@ public record TweetResponse(
         String content,
         Long userId,
         String username,
+        Long likeCount,
+        Boolean liked,
+        Boolean bookmarked,
         List<String> hashtags,
+        String imageUrl,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 

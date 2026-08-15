@@ -1,11 +1,13 @@
 package com.twitter.demo.like.service;
 
 
+import com.twitter.demo.exception.BadRequestException;
 import com.twitter.demo.exception.ResourceNotFoundException;
 import com.twitter.demo.like.Like;
 import com.twitter.demo.like.dto.LikeCreateRequest;
 import com.twitter.demo.like.dto.LikeMapper;
 import com.twitter.demo.like.dto.LikeResponse;
+import com.twitter.demo.like.dto.LikedUserDTO;
 import com.twitter.demo.like.repository.LikeRepository;
 import com.twitter.demo.security.CurrentUserService;
 import com.twitter.demo.tweet.Tweet;
@@ -15,6 +17,8 @@ import com.twitter.demo.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +48,7 @@ public class LikeServiceImpl implements LikeService {
         );
 
         if (alreadyLiked) {
-            throw new RuntimeException("User already liked this tweet");
+            throw new BadRequestException("User already liked this tweet");
         }
 
         Like like = Like.builder()
@@ -71,5 +75,27 @@ public class LikeServiceImpl implements LikeService {
 
         likeRepository.delete(like);
     }
+
+    @Override
+    public void deleteAllByUserId(Long userId) {
+
+        likeRepository.deleteAllByUserId(userId);
+    }
+    /*
+
+    @Override
+    public Long countByTweetId(Long tweetId) {
+        return likeRepository.countByTweetId(tweetId);
+    }
+
+    @Override
+    public List<LikedUserDTO> getLikedUsers(Long tweetId) {
+        return likeRepository.findAllByTweetId(tweetId)
+                .stream()
+                .map(LikeMapper::toLikedUserDTO)
+                .toList();
+    }
+
+    */
 
 }

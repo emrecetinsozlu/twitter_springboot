@@ -7,6 +7,7 @@ import com.twitter.demo.tweet.Tweet;
 import com.twitter.demo.tweet.TweetRepository;
 import com.twitter.demo.tweet.dto.TweetMapper;
 import com.twitter.demo.tweet.dto.TweetResponse;
+import com.twitter.demo.tweet.service.TweetService;
 import com.twitter.demo.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +20,21 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     private final TweetRepository tweetRepository;
     private final CurrentUserService currentUserService;
+    private final TweetService tweetService;
 
 
     @Override
     @Transactional
     public void addBookmark(Long tweetId) {
+        System.out.println("add bookmarked");
         User currentUser = currentUserService.getCurrentUser();
+        System.out.println("current user: " + currentUser.getUsername() + " id: " + tweetId);
         Tweet tweet = tweetRepository.findById(tweetId).orElseThrow(() -> new ResourceNotFoundException("Tweet bulunamadı"));
         if(currentUser.getBookmarkedTweets().contains(tweet)){
             throw new BadRequestException("Bu tweet zaten bookmarked a eklenmiş");
         }
+        currentUser.addBookmark(tweet);
+
     }
 
     @Override
@@ -39,6 +45,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         if(!currentUser.getBookmarkedTweets().contains(tweet)){
             throw new BadRequestException("Bu tweet zaten bookmarked a eklenmemiş");
         }
+        currentUser.removeBookmark(tweet);
     }
 
     @Override
@@ -46,7 +53,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         User currentUser = currentUserService.getCurrentUser();
         return currentUser.getBookmarkedTweets()
                 .stream()
-                .map(TweetMapper::toTweetResponse)
+                .map(tweetService::buildTweetResponse)
                 .toList();
 
     }

@@ -1,6 +1,8 @@
 package com.twitter.demo.user.service;
 
+import com.twitter.demo.like.service.LikeService;
 import com.twitter.demo.security.CurrentUserService;
+import com.twitter.demo.tweet.TweetRepository;
 import com.twitter.demo.user.User;
 import com.twitter.demo.user.UserRepository;
 import com.twitter.demo.user.dto.UserMapper;
@@ -16,10 +18,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CurrentUserService currentUserService;
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, CurrentUserService currentUserService) {
+    private final LikeService likeService;
+    private final TweetRepository tweetRepository;
+
+    public UserServiceImpl(UserRepository userRepository,TweetRepository tweetRepository, PasswordEncoder passwordEncoder, CurrentUserService currentUserService, LikeService likeService) {
         this.userRepository = userRepository;
+        this.tweetRepository = tweetRepository;
         this.passwordEncoder = passwordEncoder;
         this.currentUserService = currentUserService;
+        this.likeService = likeService;
     }
 
     @Override
@@ -45,5 +52,18 @@ public class UserServiceImpl implements UserService {
     public UserResponse getCurrentUser() {
         User currentUser = currentUserService.getCurrentUser();
         return UserMapper.toUserResponse(currentUser);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCurrentUser() {
+        User currentUser = currentUserService.getCurrentUser();
+        likeService.deleteAllByUserId(currentUser.getId());
+        currentUser.getBookmarkedTweets().clear();
+
+        tweetRepository.deleteAllByUserId(currentUser.getId());
+
+        userRepository.delete(currentUser);
+
     }
 }

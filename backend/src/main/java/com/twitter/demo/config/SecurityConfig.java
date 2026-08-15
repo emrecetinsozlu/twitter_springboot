@@ -5,6 +5,7 @@ import com.twitter.demo.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -12,6 +13,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +41,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/auth/**","/users/me","/users/register").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/tweet/**").permitAll()
+                        .requestMatchers("/api/auth/**","/users/register").permitAll()
+
                         .anyRequest().authenticated())
                 //session ı stateless yapınca basic-auth a da gerek kalmadı
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -50,6 +55,17 @@ public class SecurityConfig {
                 .build();
 
     }
+
+    /*
+    // YENİ WEB SECURITY CUSTOMIZER:
+    // Bu ayar, belirtilen endpoint'leri Spring Security'nin TÜM filtre zincirinden muaf tutar.
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers(HttpMethod.GET, "/tweet", "/tweet/**");
+    }
+
+    */
 
     /*
     Merhaba Backend.
@@ -64,7 +80,7 @@ Authorization gönderebilir miyim?
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3200"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3200","http://localhost:5173","http://192.168.1.5:5173","https://headband-sixtyfold-morbidly.ngrok-free.dev"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);
