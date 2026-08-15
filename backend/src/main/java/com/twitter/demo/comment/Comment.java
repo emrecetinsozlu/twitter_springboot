@@ -40,7 +40,7 @@ public class Comment {
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-    @Column(updatable = false, insertable = false,  nullable = false)
+    @Column(updatable = false,  nullable = false)
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

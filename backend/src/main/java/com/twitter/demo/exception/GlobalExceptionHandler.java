@@ -66,12 +66,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e, HttpServletRequest request) {
-        return buildErrorResponse(e.getMessage(), request, 401);
+        return buildErrorResponse("Kullanıcı adı veya şifre hatalı", request, 401);
     }
     @ExceptionHandler(com.twitter.demo.exception.BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e, HttpServletRequest request) {
         return buildErrorResponse(e.getMessage(), request, 400);
     }
+
 }
 
 /*

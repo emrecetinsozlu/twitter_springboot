@@ -13,4 +13,13 @@ public class LikeMapper {
                 like.getCreatedAt()
         );
     }
+
+    public static LikedUserDTO toLikedUserDTO(Like like) {
+        return new LikedUserDTO(
+                like.getUser().getId(),
+                like.getUser().getUsername()
+        );
+    }
+
+
 }

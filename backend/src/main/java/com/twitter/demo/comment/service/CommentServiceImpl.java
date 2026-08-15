@@ -17,6 +17,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -74,4 +76,19 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
 
     }
+
+    @Override
+    public List<CommentResponse> getCommentsByTweetId(Long tweetId) {
+        if (!tweetRepository.existsById(tweetId)) {
+            throw new ResourceNotFoundException("Tweet not found");
+        }
+
+        return commentRepository.findByTweetId(tweetId)
+                .stream()
+                .map(CommentMapper::toResponse)
+                .toList();
+
+    }
+
+
 }

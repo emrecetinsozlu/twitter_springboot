@@ -104,7 +104,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+
+
+
         String token = extractTokenFromCookie(request);
+
+        // --- BURAYA LOGLARI EKLİYORUZ ---
+        System.out.println("============== NGROK DEBUG ==============");
+        System.out.println("İstek Atılan URL: " + request.getRequestURI());
+        System.out.println("İstek Metodu: " + request.getMethod());
+        System.out.println("Çerezden Okunan Token: " + (token == null ? "NULL (ÇEREZ YOK!)" : "BAŞARILI (Token Geldi)"));
+
+
 
         if (token == null) {
             //zincirdeki bir sonraki filtreye devrediyor. Yani bu filtrenin yapacağı "token kontrolü" adımını es geçip, isteğin normal akışında devam etmesine izin veriyor.
@@ -122,7 +134,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // token valid mi süresi dolmuş mu jwtservice içerisindeki .isTokenValid de kontrol ediliyor
             // token expire olmadıysa ve token içerisindeki username ile db deki username eşleşiyorsa token validdir diyoruz
             if (jwtService.isTokenValid(token, userDetails)) {
-
+                System.out.println("Token Valid: " + token);
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
@@ -138,6 +150,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .getContext()
                         .setAuthentication(authenticationToken);
             }
+            System.out.println("Token: " + token);
         }
 
         filterChain.doFilter(request, response);

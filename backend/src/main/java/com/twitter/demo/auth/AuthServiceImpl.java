@@ -30,12 +30,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResult login(LoginRequest loginRequest) {
-
-
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password()));
         User user = userRepository.findByUsername(loginRequest.username())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
         /*
         Spring framework :
         Kim authenticate oldu?
@@ -49,7 +46,6 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResult(user.getId(), user.getUsername(), token);
 
 
-
         /*
         User user = userRepository.findByUsername(loginRequest.username())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -60,6 +56,8 @@ public class AuthServiceImpl implements AuthService {
             */
 
     }
+
+
 
 
 }

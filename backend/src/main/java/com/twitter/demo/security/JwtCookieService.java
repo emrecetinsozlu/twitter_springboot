@@ -3,6 +3,8 @@ package com.twitter.demo.security;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 
@@ -11,12 +13,34 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtCookieService {
     public void addJwtCookie(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie("access_token", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false); // prod'da true
-        cookie.setPath("/");
 
-        cookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(cookie);
+        // Modern ve hatasız çerez oluşturma yöntemi
+        ResponseCookie cookie = ResponseCookie.from("access_token", token)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(24 * 60 * 60) // 1 gün ömür
+                .build();
+
+        // Çerezi tek bir seferde ve en doğru şekilde HTTP Header'ına ekliyoruz
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
+        /*
+        // 1. Çerezi ResponseCookie ile modern şekilde oluşturun
+        ResponseCookie cookie = ResponseCookie.from("access_token", token)
+                .httpOnly(true)
+                .secure(true)     // HTTPS (ngrok) için şart
+                .sameSite("None") // İşte aradığımız metot!
+                .path("/")
+                .maxAge(3600)     // İsteğe bağlı: saniye cinsinden ömür
+                .build();
+
+// 2. Bu çerezi HTTP yanıtının (Response) Header kısmına ekleyin
+// Not: "response" nesnesi HttpServletResponse nesnendir.
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+    /*
+         */
 }

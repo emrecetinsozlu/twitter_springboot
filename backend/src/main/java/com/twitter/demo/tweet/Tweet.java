@@ -31,6 +31,13 @@ public class Tweet {
     @Size(min = 1, max = 250)
     @Column(nullable = false, length = 250)
     private String content;
+    /*
+    imageUrl      → frontend’de fotoğrafı göstermek için
+imagePublicId → ileride Cloudinary’den silmek için
+     */
+    private String imageUrl;
+    private String imagePublicId;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
